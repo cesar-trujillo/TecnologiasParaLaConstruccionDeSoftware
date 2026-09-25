@@ -1,5 +1,6 @@
 ﻿using Ejercicio1.OCP.Aliens;
 using Ejercicio1.OCP.Extensiones;
+using Ejercicio1.OCP.Fabrica;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -16,6 +17,7 @@ namespace Ejercicio1.OCP.Nucleo
         };
 
         private readonly List<(string Nombre, Func<IAliens> Crear)> _escanearADN = new();
+
         private readonly Dictionary<Type, Func<IAliens>> _supremos = new()
         {
             {typeof(Humungosaurio), () => new HumungosaurioSupremo()}
@@ -39,11 +41,20 @@ namespace Ejercicio1.OCP.Nucleo
             return lista;
         }
 
-        public List<string> ObtenerDesbloqueados() => _catalogo.Where(a => a.Desbloqueado).Select( a => a.Nombre).ToList();
-
-        public bool TieneSupremo(IAliens alien) => _supremos.ContainsKey(alien, GetType());
+        public void RegistrarADN(MuestraADN muestra)
         {
+            var nombre = muestra.Nombre;
+            _escanearADN.Add((nombre, () => FabricaAlien.CrearDesdeMuestra(muestra)));
+        }
 
+        public bool TieneSupremo(IAliens alien) => _supremos.ContainsKey(alien.GetType());
+        public IAliens CrearSupremo(IAliens alien) => _supremos[alien.GetType()]();
+        public List<(string Nombre, Func<IAliens> Crear)> ObtenerFusion() => _fusiones;
+        public IAliens ElegirAlienAleatorio()
+        {
+            var disponibles = ObtenerDesbloqueados();
+            var indice = Random.Shared.Next(disponibles.Count);
+            return disponibles[indice].Crear();
         }
     }
 }
