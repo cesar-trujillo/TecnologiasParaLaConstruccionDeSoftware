@@ -30,7 +30,7 @@ public class Cliente {
     }
 
     public double consultarSaldo(){
-        return saldo;
+        return cuenta.consultarSaldo();
     }
 
     public double calcularIntereses(){

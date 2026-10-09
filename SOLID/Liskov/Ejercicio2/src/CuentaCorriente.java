@@ -39,4 +39,9 @@ public class CuentaCorriente extends CuentaBancaria{
     public double getLimiteSobregiro(){
         return limiteSobregiro;
     }
+
+    @Override 
+    public void pagarDeuda(double cantidad){
+        throw new IllegalArgumentException();
+    }
 }
